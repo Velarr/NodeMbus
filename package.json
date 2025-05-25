@@ -1,0 +1,27 @@
+{
+  "name": "nodembus",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Velarr/MBusProject.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Velarr/MBusProject/issues"
+  },
+  "homepage": "https://github.com/Velarr/MBusProject#readme",
+  "dependencies": {
+    "@google-cloud/firestore": "^7.11.1",
+    "express": "^5.1.0",
+    "firebase-admin": "^13.4.0",
+    "geojson-validation": "^1.0.2",
+    "multer": "^2.0.0"
+  },
+  "description": ""
+}

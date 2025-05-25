@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Nova Rota</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form action="/enviar" method="post" enctype="multipart/form-data">
+    <h1>Adicionar Rota</h1>
+
+    <label>Companhia:
+      <select name="companhia" required>
+        <option value="Rodoeste">Rodoeste</option>
+        <option value="Sam">Sam</option>
+        <option value="H.Funchal">H.Funchal</option>
+      </select>
+    </label>
+
+    <label>Cor:</label>
+    <label class="color-option">
+      <input type="radio" name="cor" value="#BA8E23" required>
+      <span class="color-sample" style="background-color:#BA8E23;"></span>Dourado
+    </label>
+    <label class="color-option">
+      <input type="radio" name="cor" value="#FF0000">
+      <span class="color-sample" style="background-color:#FF0000;"></span>Vermelho
+    </label>
+    <label class="color-option">
+      <input type="radio" name="cor" value="#008000">
+      <span class="color-sample" style="background-color:#008000;"></span>Verde
+    </label>
+
+    <label>Rota:
+      <input type="text" name="rota" required>
+    </label>
+
+    <label>Número da Rota:
+      <input type="number" name="nrota" required>
+    </label>
+
+    <label>GeoJSON:
+      <input type="file" name="geojson" accept=".geojson" required>
+    </label>
+
+    <button type="submit">Enviar</button>
+  </form>
+</body>
+</html>

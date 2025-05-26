@@ -40,28 +40,13 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
       timestamp: new Date()
     };
 
-    let newId;
+    // Cria um novo documento com ID automático
+    const docRef = await firestore.collection('rotas').add(data);
+    const autoId = docRef.id;
 
-    await firestore.runTransaction(async (transaction) => {
-      const contadorDoc = await transaction.get(contadorDocRef);
-      if (!contadorDoc.exists) {
-        // Se não existir, cria e inicializa com 1
-        transaction.set(contadorDocRef, { lastId: 1 });
-        newId = 1;
-      } else {
-        const lastId = contadorDoc.data().lastId || 0;
-        newId = lastId + 1;
-        transaction.update(contadorDocRef, { lastId: newId });
-      }
-
-      const newDocRef = firestore.collection('rotas').doc(newId.toString());
-      transaction.set(newDocRef, data);
-    });
-
-    // Apaga o arquivo temporário enviado
+    // Remove o arquivo temporário
     fs.unlinkSync(req.file.path);
 
-    // Retorna HTML com contagem regressiva e informação do novo ID
     res.send(`
       <html>
       <head>
@@ -83,17 +68,17 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
       </head>
       <body>
         <h1>Rota enviada com sucesso!</h1>
-        <p>ID da rota: ${newId}</p>
+        <p>ID automático da rota: ${autoId}</p>
         <p>Redirecionando para o formulário em <span id="timer">5</span> segundos...</p>
       </body>
       </html>
     `);
-
   } catch (err) {
     console.error(err);
     res.status(500).send('Erro ao processar a rota.');
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

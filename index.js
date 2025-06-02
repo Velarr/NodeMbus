@@ -10,13 +10,14 @@ const upload = multer({ dest: 'uploads/' });
 let credentialsPath;
 
 if (process.env.GOOGLE_CREDENTIALS_BASE64) {
-  // VERCEL: decodifica o base64 e escreve um arquivo temporário
   credentialsPath = path.join('/tmp', 'credentials.json');
   fs.writeFileSync(credentialsPath, Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64'));
-} else {
-  // Local: usa o arquivo direto
-  credentialsPath = path.join(__dirname, 'credentials.json');
+
+  // DEBUG: verificar o arquivo criado
+  console.log('Arquivo credentials.json criado com sucesso:');
+  console.log(fs.readFileSync(credentialsPath, 'utf8'));
 }
+
 
 const firestore = new Firestore({
   projectId: 'busdb-90db1',

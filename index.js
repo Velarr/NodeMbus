@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Firestore } from '@google-cloud/firestore';
 import open from 'open';
+import * as toGeoJSON from '@tmcw/togeojson';
+import { DOMParser } from 'xmldom';
 
-// Como __dirname não existe no ESM, crie uma variável para ele:
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -19,24 +20,34 @@ const firestore = new Firestore({
   keyFilename: './credentials.json'
 });
 
-// Servir arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota GET para enviar o index.html
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-const contadorDocRef = firestore.collection('counters').doc('rotas');
 
 app.post('/enviar', upload.single('geojson'), async (req, res) => {
   try {
     const { companhia, cor, rota, nrota } = req.body;
 
-    if (!req.file) return res.status(400).send('Arquivo GeoJSON obrigatório');
+    if (!req.file) return res.status(400).send('Arquivo obrigatório');
 
-    const rawData = fs.readFileSync(req.file.path, 'utf8');
-    const geojson = JSON.parse(rawData);
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+
+    let geojson;
+
+    if (ext === '.kml') {
+      const kmlData = fs.readFileSync(filePath, 'utf8');
+      const dom = new DOMParser().parseFromString(kmlData);
+      geojson = toGeoJSON.kml(dom);
+    } else if (ext === '.geojson') {
+      const rawData = fs.readFileSync(filePath, 'utf8');
+      geojson = JSON.parse(rawData);
+    } else {
+      fs.unlinkSync(filePath);
+      return res.status(400).send('Formato de arquivo não suportado. Envie um .kml ou .geojson.');
+    }
 
     const data = {
       companhia,
@@ -47,12 +58,10 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
       timestamp: new Date()
     };
 
-    // Cria um novo documento com ID automático
     const docRef = await firestore.collection('rotas').add(data);
     const autoId = docRef.id;
 
-    // Remove o arquivo temporário
-    fs.unlinkSync(req.file.path);
+    fs.unlinkSync(filePath);
 
     res.send(`
       <html>

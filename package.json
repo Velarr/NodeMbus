@@ -18,11 +18,13 @@
   "homepage": "https://github.com/Velarr/MBusProject#readme",
   "dependencies": {
     "@google-cloud/firestore": "^7.11.1",
+    "@tmcw/togeojson": "^7.1.2",
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "geojson-validation": "^1.0.2",
     "multer": "^2.0.0",
-    "open": "^10.1.2"
+    "open": "^10.1.2",
+    "xmldom": "^0.6.0"
   },
   "description": ""
 }

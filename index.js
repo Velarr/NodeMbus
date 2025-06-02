@@ -7,23 +7,10 @@ const { Firestore } = require('@google-cloud/firestore');
 const app = express();
 const upload = multer({ dest: 'uploads/' });
 
-let credentialsPath;
-
-if (process.env.GOOGLE_CREDENTIALS_BASE64) {
-  credentialsPath = path.join('/tmp', 'credentials.json');
-  fs.writeFileSync(credentialsPath, Buffer.from(process.env.GOOGLE_CREDENTIALS_BASE64, 'base64'));
-
-  // DEBUG: verificar o arquivo criado
-  console.log('Arquivo credentials.json criado com sucesso:');
-  console.log(fs.readFileSync(credentialsPath, 'utf8'));
-}
-
-
 const firestore = new Firestore({
   projectId: 'busdb-90db1',
-  keyFilename: credentialsPath
+  keyFilename: './credentials.json'
 });
-
 
 // Servir arquivos estáticos da pasta 'public'
 app.use(express.static(path.join(__dirname, 'public')));

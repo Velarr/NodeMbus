@@ -17,15 +17,16 @@ const upload = multer({ dest: 'uploads/' });
 
 const firestore = new Firestore({
   projectId: 'busdb-90db1',
-  keyFilename: './credentials.json'
+  keyFilename: './credentials.json' // Autenticação Firestore
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); // Serve ficheiros estáticos
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // Página principal
 });
 
+// Endpoint para envio do ficheiro KML ou GeoJSON e dados da rota
 app.post('/enviar', upload.single('geojson'), async (req, res) => {
   try {
     const { companhia, cor, rota, nrota } = req.body;
@@ -37,6 +38,7 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
 
     let geojson;
 
+    // Converter KML para GeoJSON ou ler GeoJSON direto
     if (ext === '.kml') {
       const kmlData = fs.readFileSync(filePath, 'utf8');
       const dom = new DOMParser().parseFromString(kmlData);
@@ -46,9 +48,10 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
       geojson = JSON.parse(rawData);
     } else {
       fs.unlinkSync(filePath);
-      return res.status(400).send('Formato de arquivo não suportado. Envie um .kml ou .geojson.');
+      return res.status(400).send('Formato não suportado, envie .kml ou .geojson');
     }
 
+    // Preparar dados para o Firestore
     const data = {
       companhia,
       cor,
@@ -58,11 +61,13 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
       timestamp: new Date()
     };
 
+    // Guardar dados na coleção 'rotas'
     const docRef = await firestore.collection('rotas').add(data);
     const autoId = docRef.id;
 
-    fs.unlinkSync(filePath);
+    fs.unlinkSync(filePath); // Apagar ficheiro temporário
 
+    // Resposta HTML com confirmação e redirecionamento automático
     res.send(`
       <html>
       <head>
@@ -98,5 +103,5 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-  open(`http://localhost:${PORT}`);
+  open(`http://localhost:${PORT}`); // Abre o browser automaticamente
 });

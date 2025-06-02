@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
+    "type": "module",
     "url": "git+https://github.com/Velarr/MBusProject.git"
   },
   "keywords": [],
@@ -21,7 +21,8 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "geojson-validation": "^1.0.2",
-    "multer": "^2.0.0"
+    "multer": "^2.0.0",
+    "open": "^10.1.2"
   },
   "description": ""
 }

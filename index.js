@@ -1,8 +1,15 @@
-const express = require('express');
-const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
-const { Firestore } = require('@google-cloud/firestore');
+import express from 'express';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { Firestore } from '@google-cloud/firestore';
+import open from 'open';
+
+// Como __dirname não existe no ESM, crie uma variável para ele:
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -79,8 +86,8 @@ app.post('/enviar', upload.single('geojson'), async (req, res) => {
   }
 });
 
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
+  open(`http://localhost:${PORT}`);
 });
